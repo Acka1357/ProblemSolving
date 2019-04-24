@@ -1,54 +1,54 @@
-//
-// Created by Acka on 4/12/16.
-//
+// solution:
+// oa: a에 있는 값을 소팅.
+// d[i][j][0]: a[i]를 oa[j]로 매칭시켰고, 증가단조수열일때 최소 합
+// d[i][j][1]: a[i]를 oa[j]로 매칭시켰고, 감소단조수열일때 최소 합
+// 실제 a에 들어있는 밸류 외에 다른 값과 매칭 시키는 것은 의미가 없음.
 
-#include <stdio.h>
-#include <memory.h>
+// 시간복잡도: O(N^2)
+// 분류: DP
+// 난이도: 1750   
+
+#include <cstdio>
+#include <cstring>
 #include <algorithm>
 using namespace std;
 
-#define ABS(x)  (x < 0 ? (-(x)) : (x))
+typedef long long ll;
 
-long long int d[2000][2000];
+ll absx(ll x){
+    return x < 0 ? -x : x;
+}
+
+ll a[2002], d[2002][2002][2], oa[2002];
 
 int main()
 {
-    int N, n[2000], s[2000]; scanf("%d", &N);
-
-    for(int i = 0; i < N; i++) {
-        scanf("%d", &n[i]);
-        s[i] = n[i];
+    int N; scanf("%d", &N);
+    for(int i = 1; i <= N; i++){
+        scanf("%lld", &a[i]);
+        oa[i] = a[i];
     }
 
-    sort(s, s + N);
+    sort(oa + 1, oa + N + 1);
+    oa[N + 1] = 1000000000;
 
     memset(d, 0x3f, sizeof(d));
-    for(int i = 0; i < N; i++)
-        d[0][i] = ABS(n[i] - s[0]);
-
-    for(int i = 1; i < N; i++){
-        d[i][0] = d[i - 1][0] + ABS(n[i] - s[0]);
-        for(int j = 1; j < N; j++)
-            d[i][j] = min(d[i][j - 1] + ABS(n[i] - s[j - 1]), d[i - 1][j] + ABS(n[i] - s[j]));
+    d[0][0][0] = d[0][N + 1][1] = 0;
+    for(int i = 1; i <= N; i++){
+        for(int j = 0; j <= N + 1; j++){
+            d[i][j][0] = d[i - 1][j][0] + absx(oa[j] - a[i]);
+            if(j) d[i][j][0] = min(d[i][j][0], d[i][j - 1][0] - absx(oa[j - 1] - a[i]) + absx(oa[j] - a[i]));
+        }
+        for(int j = N + 1; j >= 0; j--){
+            d[i][j][1] = d[i - 1][j][1] + absx(oa[j] - a[i]);
+            if(j <= N) d[i][j][1] = min(d[i][j][1], d[i][j + 1][1] - absx(oa[j + 1] - a[i]) + absx(oa[j] - a[i]));
+        }
     }
 
-    long long int ans = 1ll << 62;
-    for(int i = 0; i < N; i++)
-        ans = min(ans, d[N - 1][i]);
-
-    memset(d, 0x3f, sizeof(d));
-    for(int i = 0; i < N; i++)
-        d[0][i] = ABS(n[i] - s[N - 1]);
-
-    for(int i = 1; i < N; i++){
-        d[i][N - 1] = d[i - 1][N - 1] + ABS(n[i] - s[N - 1]);
-        for(int j = N - 2; 0 <= j; j--)
-            d[i][j] = min(d[i][j + 1] + ABS(n[i] - s[j + 1]), d[i - 1][j] + ABS(n[i] - s[j]));
-    }
-
-    for(int i = 0; i < N; i++)
-        ans = min(ans, d[N - 1][i]);
-
+    ll ans = min(d[N][1][0], d[N][1][1]);
+    for(int i = 2; i <= N; i++)
+        ans = min({ans, d[N][i][0], d[N][i][1]});
     printf("%lld\n", ans);
+
     return 0;
 }
