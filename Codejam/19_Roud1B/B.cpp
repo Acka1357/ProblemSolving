@@ -40,7 +40,6 @@ int main()
 			tmp = w40 - p(13) * x[3] - p(10) * x[4] - p(8) * x[5] - p(6) * x[6];
 			x[1] = calc(tmp, 40);
 			x[2] = calc(tmp, 20, true);
-			while(x[3] != calc(tmp, 13));
 
 			bool psb = true;
 			for(int i = 1; i <= 5; i++)
