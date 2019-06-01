@@ -4,4 +4,6 @@ cpp_custom_out
 *.in
 *.out
 test.cpp
+main.cpp
+lecture.cpp
 xgit/
