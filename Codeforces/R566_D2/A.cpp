@@ -8,22 +8,23 @@
 #include <cstdlib>
 #include <cmath>
 #include <string>
+#include <set>
+#include <map>
 using namespace std;
 
 typedef long long ll;
 
-struct Point{ ll x, y;
-	bool operator <(const Point &o) const{ return x == o.x ? y < o.y : x < o.x; }
-};
-struct Crd{ int r, c; };
-struct Edge{ int to, cost; };
-struct Node{ int cur; ll cost;
-	bool operator <(const Node &o)const{ return cost > o.cost; }
-};
-
+ll d[61];
 
 int main()
 {
+	ll N; scanf("%lld", &N);
+
+	d[0] = 1;
+	for(int i = 2; i <= N; i += 2)
+		d[i] = d[i - 2] * 2;
+
+	printf("%lld\n", d[N]);
 
 	return 0;
 }
